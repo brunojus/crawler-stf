@@ -9,3 +9,7 @@
 class StfPipeline(object):
     def process_item(self, item, spider):
         return item
+
+class JurisPipeline(object):
+    def process_item(self, item, spider):
+        return item

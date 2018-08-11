@@ -12,3 +12,11 @@ class StfItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
     pass
+
+class JurisItem(scrapy.Item):
+    data = scrapy.Field()
+    andamento = scrapy.Field()
+    orgao_julgador = scrapy.Field()
+    observacao= scrapy.Field()
+    documento = scrapy.Field()
+    pass
