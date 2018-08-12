@@ -66,6 +66,7 @@ ROBOTSTXT_OBEY = True
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
    'stf.pipelines.JurisPipeline': 300,
+   'stf.pipelines.MySQLStorePipeline':500
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
