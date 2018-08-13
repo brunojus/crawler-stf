@@ -9,7 +9,9 @@ import os
 import re
 import csv
 from stf.items import JurisItem
-
+from selenium.webdriver.support.select import Select
+import logging
+logger = logging.getLogger(__name__)
 
 class ProcessoSpider(scrapy.Spider):
     processos = []
@@ -22,33 +24,38 @@ class ProcessoSpider(scrapy.Spider):
         self.options.add_argument('headless')
         self.options.add_argument('window-size=1200x600')
         self.driver = webdriver.Chrome('chromedriver',chrome_options=self.options)  
+        # self.driver = webdriver.Chrome('chromedriver')  
     
     def start_requests(self):
-        url = 'http://www.stf.jus.br/portal/processo/listarProcesso.asp'
+        url = 'http://stf.jus.br/'
 
         self.driver.get(url)
 
         #Mudar o parâmetro no sendKeys
-        self.driver.find_element_by_id('numero').send_keys("AC 500")
+        filterSelector = Select(self.driver.find_element_by_class_name('tipo-pesquisa-processo'))
+
+        for option in filterSelector.options:
+            if option.text == 'Por Número Único':
+                option.click()
+
+        processo = "00045021120040010000"
+        for letter in processo:  
+            time.sleep(0.01)          
+            self.driver.find_element_by_id('pesquisaPrincipalNumeroUnico').send_keys(letter)
+            time.sleep(0.1)
         
-        self.driver.find_element_by_css_selector('#dropmsgform > div:nth-child(7) > input[type="button"]:nth-child(2)').click()
+        self.driver.find_element_by_id('btnPesquisar').click()
       
         yield scrapy.Request(url, self.parse)
 
     def parse(self, response):        
 
-        response = Selector(text=self.driver.page_source.encode('utf-8'))
-
-        
-        table = response.xpath('//*[@id="divImpressaoProcessos"]/div[2]/table//tr')
-
-        #Retira o cabeçalho da tabela
-        for data in table[1:]:
-            item = JurisItem()            
-            item['data'] = data.xpath('td[1]//text()').extract_first().encode('utf8')
-            item['andamento'] = data.xpath('td[2]//text()').extract_first().encode('utf8')
-            item['orgao_julgador'] = data.xpath('td[3]//text()').extract_first().encode('utf8')
-            item['observacao'] = data.xpath('td[4]//text()').extract_first().encode('utf8')
-            item['documento'] = data.xpath('td[5]//text()').extract_first().encode('utf8')
+        andamentos = self.driver.find_elements_by_class_name('andamento-detalhe')
+        for andamento in andamentos: 
+            item = JurisItem() 
+            item['data'] = andamento.find_element_by_class_name('andamento-data').text
+            item['andamento'] = andamento.find_element_by_class_name('andamento-nome').text
+            item['observacao'] = andamento.find_elements_by_css_selector('div')[6].text
 
             yield item
+

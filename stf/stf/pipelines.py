@@ -41,7 +41,8 @@ class MySQLStorePipeline(object):
         processo = self.cursor.fetchone()
 
         if not processo:         
-            self.cursor.execute("""INSERT INTO processos (data,andamento,orgao_julgador,observacao,documento) VALUES (%s,%s,%s,%s,%s)""", (item['data'],item['andamento'], item['orgao_julgador'],item['observacao'],item['documento']))
+            self.cursor.execute("""INSERT INTO processos (data,andamento,observacao) VALUES (%s,%s,%s)""", (item['data'],item['andamento'],item['observacao']))
             self.conn.commit()
+            self.logger.info('Inserindo no BD')      
         else:
             self.logger.info('Já existe esse andamento na base de dados')      

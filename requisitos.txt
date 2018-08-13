@@ -1,0 +1,6 @@
+Reunião 13/08/2018
+
+
+- Interface Mobile pra recuperar
+- Inserir novos processos
+- Endpoint salvos na base
