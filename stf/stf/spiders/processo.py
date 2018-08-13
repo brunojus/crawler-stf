@@ -9,7 +9,7 @@ import os
 import re
 import csv
 from stf.items import JurisItem
-from pyvirtualdisplay import Display
+
 
 class ProcessoSpider(scrapy.Spider):
     processos = []
@@ -18,9 +18,10 @@ class ProcessoSpider(scrapy.Spider):
     start_urls = ['http://www.stf.jus.br/portal/processo/listarProcesso.asp/']
 
     def __init__(self):
-        self.display = Display(visible=0, size=(1024, 768))
-        self.display.start()
-        self.driver = webdriver.Chrome('chromedriver')  
+        self.options = webdriver.ChromeOptions()
+        self.options.add_argument('headless')
+        self.options.add_argument('window-size=1200x600')
+        self.driver = webdriver.Chrome('chromedriver',chrome_options=self.options)  
     
     def start_requests(self):
         url = 'http://www.stf.jus.br/portal/processo/listarProcesso.asp'
