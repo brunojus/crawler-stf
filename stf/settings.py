@@ -14,6 +14,8 @@ BOT_NAME = 'stf'
 SPIDER_MODULES = ['stf.spiders']
 NEWSPIDER_MODULE = 'stf.spiders'
 
+LOG_STDOUT = True
+LOG_FILE = 'scrapy_output.txt'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'stf (+http://www.yourdomain.com)'

@@ -34,14 +34,18 @@ class MySQLStorePipeline(object):
         self.logger = logging.getLogger()
 
 
-    def process_item(self, item, spider):       
-        
-        self.cursor.execute("SELECT * FROM processos WHERE data=%s AND observacao=%s" , (item['data'],item['observacao'],))
+    def process_item(self, item, spider):             
+
+
+        self.cursor.execute("SELECT id FROM processos WHERE numero_processo=%s", [spider.processo])
+        id_processo = self.cursor.fetchone()
+
+        self.cursor.execute("SELECT * FROM andamento WHERE data=%s AND observacao=%s AND processos_id=%s"  , (item['data'],item['observacao'],[id_processo]))
 
         processo = self.cursor.fetchone()
 
         if not processo:         
-            self.cursor.execute("""INSERT INTO processos (data,andamento,observacao) VALUES (%s,%s,%s)""", (item['data'],item['andamento'],item['observacao']))
+            self.cursor.execute("""INSERT INTO andamento (data,andamento,observacao, processos_id) VALUES (%s,%s,%s,%s)""", (item['data'],item['andamento'],item['observacao'],[id_processo]))
             self.conn.commit()
             self.logger.info('Inserindo no BD')      
         else:
